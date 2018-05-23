@@ -1,6 +1,6 @@
 from flask import make_response, jsonify
-from app import app
 from app.models import LeaveTypes
+
 
 def response_for_created_leave_type(leave_type, status_code):
     """
@@ -18,6 +18,7 @@ def response_for_created_leave_type(leave_type, status_code):
         'validity': leave_type.validity
     })), status_code
 
+
 def response_for_user_leave_type(leaveT):
     """
     Return the response for when a single Leave_Type when requested by the user.
@@ -26,26 +27,27 @@ def response_for_user_leave_type(leaveT):
     """
     return make_response(jsonify({
         'status': 'success',
-        'leaveType': leaveT.leaveType,
+        'leave_type': leaveT.leaveType,
         'description': leaveT.description,
         'num_of_days': leaveT.num_of_days,
         'validity': leaveT.validity,
-        'carry_forward': leaveT.num_of_days
+        'carry_forward': leaveT.carry_forward
     }))
 
-def get_leaves_types_list(leave_types):
 
+def get_leaves_types_list(leave_types):
     leaveT = []
     for leave_type in leave_types:
-         leaveT.append(leave_type)
+        leaveT.append(leave_type)
     return leaveT
 
-def response_for_all_leave_types(leaveTypes):
 
+def response_for_all_leave_types(leaveTypes):
     return make_response(jsonify({
         'status': 'success',
         'types': leaveTypes
     })), 200
+
 
 def response(status, message, code):
     """
@@ -60,8 +62,8 @@ def response(status, message, code):
         'message': message
     })), code
 
-def response_for_created_leave(leave, status_code):
 
+def response_for_created_leave(leave, status_code):
     leave_type = LeaveTypes.query.filter_by(id=leave.leaveType).first()
 
     return make_response(jsonify({
@@ -75,4 +77,3 @@ def response_for_created_leave(leave, status_code):
         'leave_status': leave.status,
         'employee_id': leave.employee_id
     })), status_code
-

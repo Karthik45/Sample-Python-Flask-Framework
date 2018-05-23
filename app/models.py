@@ -135,6 +135,7 @@ class BlackListToken(db.Model):
             return True
         return False
 
+
 class LeaveTypes(db.Model):
     """
     Class to represent the LeaveTypes model
@@ -162,7 +163,6 @@ class LeaveTypes(db.Model):
         self.modified_at = datetime.datetime.utcnow()
 
     def save(self):
-
         db.session.add(self)
         db.session.commit()
 
@@ -183,8 +183,22 @@ class LeaveTypes(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-class Leaves(db.Model):
+    @classmethod
+    def return_all(cls):
+        return {'leave_types': list(map(lambda x: cls.to_json(x), LeaveTypes.query.all()))}
 
+    def to_json(x):
+        return {
+            'id': x.id,
+            'leave_type': x.leaveType,
+            'validity': x.validity,
+            'num_of_days': x.num_of_days,
+            'description': x.description,
+            'carry_forward': x.carry_forward
+        }
+
+
+class Leaves(db.Model):
     __tablename__ = 'leaves'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -210,7 +224,6 @@ class Leaves(db.Model):
         self.modified_at = datetime.datetime.utcnow()
 
     def save(self):
-
         db.session.add(self)
         db.session.commit()
 
@@ -230,3 +243,21 @@ class Leaves(db.Model):
         """
         db.session.delete(self)
         db.session.commit()
+
+    @classmethod
+    def return_all_leaves(cls):
+        return {"leaves": list(map(lambda x: cls.to_json(x), Leaves.query.all()))}
+
+    def to_json(leave):
+        leave_type = LeaveTypes.query.filter_by(id=leave.leaveType).first()
+        return {
+            'status': 'success',
+            'id': leave.id,
+            'leave_type': leave_type.__getattribute__('leaveType'),
+            'description': leave.description,
+            'from_date': leave.from_date,
+            'to_date': leave.to_date,
+            'num_of_days': leave.num_of_days,
+            'leave_status': leave.status,
+            'employee_id': leave.employee_id
+        }

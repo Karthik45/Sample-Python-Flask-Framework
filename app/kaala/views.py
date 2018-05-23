@@ -1,14 +1,16 @@
-from flask import Blueprint, request, abort
+from flask import Blueprint, request, abort, jsonify
+
 from app.auth.helper import token_required
 from app.kaala.helper import response, response_for_created_leave_type, response_for_user_leave_type, \
-    response_for_all_leave_types, get_leaves_types_list, response_for_created_leave
-from app.models import User, LeaveTypes, Leaves
+    response_for_created_leave
+from app.models import LeaveTypes, Leaves
 
 # Initialize blueprint
-leaveType = Blueprint('leaveType', __name__)
+leaveType = Blueprint('leaveTypes', __name__)
 leaves = Blueprint('leaves', __name__)
 
-@leaveType.route('/leaveType/', methods=['POST'])
+
+@leaveType.route('/leaveTypes/', methods=['POST'])
 @token_required
 def create_leave_type(current_user):
     """
@@ -31,7 +33,8 @@ def create_leave_type(current_user):
         return response('failed', 'Missing leaveType name attribute', 400)
     return response('failed', 'Content-type must be json', 202)
 
-@leaveType.route('/leaveType/<leave_type_id>', methods=['GET'])
+
+@leaveType.route('/leaveTypes/<leave_type_id>', methods=['GET'])
 @token_required
 def get_leave_type(current_user, leave_type_id):
     """
@@ -50,7 +53,8 @@ def get_leave_type(current_user, leave_type_id):
             return response_for_user_leave_type(leave_type)
         return response('failed', "leave_type not found", 404)
 
-@leaveType.route('/leaveType/', methods=['GET'])
+
+@leaveType.route('/leaveTypes/', methods=['GET'])
 @token_required
 def get_all_leave_types(current_user):
     """
@@ -59,17 +63,14 @@ def get_all_leave_types(current_user):
     :param Leave_Type_id: Leave_Type Id
     :return:
     """
-    leaveTypes = LeaveTypes.query.all()
 
-    if leaveTypes:
-        return response_for_all_leave_types(get_leaves_types_list(leaveTypes))
-    else:
-        return response('failed', "LeaveTypes not found", 404)
 
-@leaveType.route('/leaveType/<leave_type_id>', methods=['PUT'])
+    return jsonify(LeaveTypes.return_all())
+
+
+@leaveType.route('/leaveTypes/<leave_type_id>', methods=['PUT'])
 @token_required
 def edit_leave_type(current_user, leave_type_id):
-
     if request.content_type == 'application/json':
         data = request.get_json()
         leaveType_name = data.get('leaveType')
@@ -96,10 +97,9 @@ def edit_leave_type(current_user, leave_type_id):
     return response('failed', 'Content-type must be json', 202)
 
 
-@leaveType.route('/leaveType/<leave_type_id>', methods=['DELETE'])
+@leaveType.route('/leaveTypes/<leave_type_id>', methods=['DELETE'])
 @token_required
 def delete_leave_type(current_user, leave_type_id):
-
     try:
         int(leave_type_id)
     except:
@@ -111,7 +111,6 @@ def delete_leave_type(current_user, leave_type_id):
         abort(404)
     leave_type.delete()
     return response('success', 'LeaveType Deleted successfully', 200)
-
 
 
 @leaves.route('/leaves/', methods=['POST'])
@@ -139,6 +138,7 @@ def create_leave(current_user):
         return response('failed', 'Missing leaveType attribute', 400)
     return response('failed', 'Content-type must be json', 202)
 
+
 @leaves.route('/leaves/<leave_id>', methods=['GET'])
 @token_required
 def get_leave(current_user, leave_id):
@@ -157,5 +157,11 @@ def get_leave(current_user, leave_id):
         if leave:
             return response_for_created_leave(leave, 200)
         return response('failed', "leave_type not found", 404)
+
+@leaves.route('/leaves/', methods=['GET'])
+@token_required
+def get_all_leave(current_user):
+
+  return jsonify(Leaves.return_all_leaves())
 
 
