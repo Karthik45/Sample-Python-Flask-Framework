@@ -74,6 +74,6 @@ def response_for_created_leave(leave, status_code):
         'from_date': leave.from_date,
         'to_date': leave.to_date,
         'num_of_days': leave.num_of_days,
-        'leave_status': leave.status,
+        'leave_status': leave.leave_status,
         'employee_id': leave.employee_id
     })), status_code

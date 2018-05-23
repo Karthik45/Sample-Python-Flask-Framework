@@ -166,13 +166,12 @@ class LeaveTypes(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, name):
+    def update(self):
         """
         Update the details of the LeaveType
         :param name:
         :return:
         """
-        self.name = name
         db.session.commit()
 
     def delete(self):
@@ -208,18 +207,18 @@ class Leaves(db.Model):
     to_date = db.Column(db.DateTime, nullable=False)
     num_of_days = db.Column(db.Integer, nullable=False)
     employee_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    status = db.Column(db.Integer, nullable=False)
+    leave_status = db.Column(db.Integer, nullable=False)
     created_on = db.Column(db.DateTime, nullable=False)
     modified_at = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, leaveType, description, from_date, to_date, num_of_days, employee_id, status):
+    def __init__(self, leaveType, description, from_date, to_date, num_of_days, employee_id, leave_status):
         self.leaveType = leaveType
         self.description = description
         self.from_date = from_date
         self.to_date = to_date
         self.num_of_days = num_of_days
         self.employee_id = employee_id
-        self.status = status
+        self.leave_status = leave_status
         self.created_on = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
 
@@ -227,13 +226,12 @@ class Leaves(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, name):
+    def update(self):
         """
         Update the details of the Leaves
         :param name:
         :return:
         """
-        self.name = name
         db.session.commit()
 
     def delete(self):
@@ -258,6 +256,6 @@ class Leaves(db.Model):
             'from_date': leave.from_date,
             'to_date': leave.to_date,
             'num_of_days': leave.num_of_days,
-            'leave_status': leave.status,
+            'leave_status': leave.leave_status,
             'employee_id': leave.employee_id
         }
