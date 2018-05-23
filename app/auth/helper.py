@@ -1,3 +1,5 @@
+import smtplib
+
 from flask import request, make_response, jsonify
 from app.models import User
 from functools import wraps
@@ -76,3 +78,27 @@ def response_auth(status, message, token, status_code):
         'message': message,
         'auth_token': token.decode("utf-8")
     })), status_code
+
+
+def response_reg(status, message, status_code, content):
+    """
+    Make a Http response to send the auth token
+    :param status: Status
+    :param message: Message
+    :param token: Authorization Token
+    :param status_code: Http status code
+    :return: Http Json response
+    """
+    return make_response(jsonify({
+        'status': status,
+        'message': message,
+        'password': content,
+    })), status_code
+
+
+def send_email(content, email):
+    mail = smtplib.SMTP('smtp.gmail.com', 587)
+    mail.starttls()
+    mail.login("reddys.purushotham@gmail.com", "")
+    mail.sendmail("reddys.purushotham@gmail.com", email, content)
+    mail.close()

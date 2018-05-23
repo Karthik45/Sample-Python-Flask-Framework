@@ -5,6 +5,8 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 
 # Initialize application
+
+
 app = Flask(__name__, static_folder=None)
 
 # Enabling cors
@@ -30,7 +32,10 @@ from app import views
 from app.auth.views import auth
 from app.kaala.views import leaveType
 from app.kaala.views import leaves
+from app.user_details.views import profile
+
 
 app.register_blueprint(auth, url_prefix='/v1')
 app.register_blueprint(leaveType, url_prefix='/v1')
 app.register_blueprint(leaves, url_prefix='/v1')
+app.register_blueprint(profile, url_prefix='/v1')

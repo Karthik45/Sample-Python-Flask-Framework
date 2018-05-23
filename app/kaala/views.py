@@ -172,16 +172,16 @@ def edit_leaves(current_user, leave_id):
         leave = Leaves.query.filter_by(id=leave_id).first()
 
         if leave.leave_status is 0:
-           if leave:
-              leave.leaveType =  data['leaveType']
-              leave.description = data['description']
-              leave.from_date = data['from_date']
-              leave.to_date = data['to_date']
-              leave.num_of_days = data['num_of_days']
-              leave.leave_status = data['leave_status']
-              leave.update()
-              return response_for_created_leave(leave, 201)
-           return response('failed', 'Missing leave attribute', 400)
+            if leave:
+                leave.leaveType = data['leaveType']
+                leave.description = data['description']
+                leave.from_date = data['from_date']
+                leave.to_date = data['to_date']
+                leave.num_of_days = data['num_of_days']
+                leave.leave_status = data['leave_status']
+                leave.update()
+                return response_for_created_leave(leave, 201)
+            return response('failed', 'Missing leave attribute', 400)
         return response('failed', 'Unable to edit leave because already submitted. please contact admin', 400)
     return response('failed', 'Content-type must be json', 202)
 
@@ -189,7 +189,6 @@ def edit_leaves(current_user, leave_id):
 @leaveType.route('/leaves/<leave_id>', methods=['DELETE'])
 @token_required
 def delete_leaves(current_user, leave_id):
-
     try:
         int(leave_id)
     except:
@@ -198,8 +197,8 @@ def delete_leaves(current_user, leave_id):
     leave = Leaves.query.filter_by(id=leave_id).first()
 
     if leave.leave_status is 0:
-       if leave:
-          abort(404)
-       leave.delete()
-       return response('success', 'Leave Deleted successfully', 200)
+        if leave:
+            abort(404)
+        leave.delete()
+        return response('success', 'Leave Deleted successfully', 200)
     return response('failed', 'Unable to delete leave because already submitted. Please contact admin', 400)

@@ -1,8 +1,11 @@
+import random
+import string
+
 from app import bcrypt
 from flask import Blueprint, request
 from flask.views import MethodView
 from app.models import User, BlackListToken
-from app.auth.helper import response, response_auth
+from app.auth.helper import response, response_auth, response_reg, send_email
 from app.auth.helper import token_required
 import re
 
@@ -19,16 +22,21 @@ class RegisterUser(MethodView):
         Register a user, generate their token and add them to the database
         :return: Json Response with the user`s token
         """
+        random_char = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
+        content = "Your login password for the leave management app is " + random_char
         if request.content_type == 'application/json':
             post_data = request.get_json()
+            emp_id = post_data.get('emp_id')
             email = post_data.get('email')
-            password = post_data.get('password')
+            password = random_char
             role = post_data.get('role')
             if re.match(r"[^@]+@[^@]+\.[^@]+", email) and len(password) > 4:
                 user = User.get_by_email(email)
                 if not user:
-                    token = User(email=email, password=password, role=role).save()
-                    return response_auth('success', 'Successfully registered', token, 201)
+                    token = User(emp_id=emp_id, email=email, password=password, role=role)
+                    token.save()
+                    send_email(content, email)
+                    return response_reg('success', 'Successfully registered',content, 201)
                 else:
                     return response('failed', 'Failed, User already exists, Please sign In', 400)
             return response('failed', 'Missing or wrong email format or password is less than four characters', 400)

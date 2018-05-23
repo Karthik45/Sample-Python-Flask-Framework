@@ -1,8 +1,8 @@
 import os
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
-postgres_local_base = 'postgresql://postgres:123456@localhost/'
-database_name = 'tv_website_data'
+postgres_local_base = 'postgres://lpsrcipcyspdwa:e6cad96cf7ef7492a47e1dfb5bb10f57a026daf1c56fbc489533f796e5609c29@ec2-54-247-111-19.eu-west-1.compute.amazonaws.com:5432/'
+database_name = 'd71nr0qkcvosp7'
 
 class BaseConfig:
     """
